@@ -38,7 +38,7 @@ class TagAdmin(admin.ModelAdmin):
     empty_value_display = VALUE_DISPLAY
 
 
-class Ingredient_inline(admin.TabularInline):
+class IngredientLnline(admin.TabularInline):
     model = AmountIngredient
     extra = 10
 
@@ -49,7 +49,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ('author', 'name', 'cooking_time')
     search_fields = ('name', 'author', 'tags')
     list_filter = ('author', 'name', 'tags')
-    inlines = (Ingredient_inline,)
+    inlines = (IngredientLnline,)
     empty_value_display = VALUE_DISPLAY
 
     def count_favorites(self, obj):
