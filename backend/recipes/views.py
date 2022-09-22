@@ -104,5 +104,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredients_set[name]['measurement_unit'],
         ) for name in ingredients_set]
 
-        response = HttpResponse(cart_list, content_type='text/plain')
-        return response
+        return HttpResponse(cart_list, content_type='text/plain')
