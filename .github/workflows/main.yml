@@ -59,7 +59,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker compose rm web
+            sudo docker-compose rm web
             sudo docker pull kekkisama/backend:latest
             sudo docker pull kekkisama/frontend:latest
             touch .env
