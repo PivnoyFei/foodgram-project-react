@@ -1,4 +1,5 @@
 <h1 align="center"><a target="_blank" href="https://github.com/PivnoyFei/foodgram-project-react/">Проект Продуктовый помошник</a></h1>
+
 ![Foodgram workflow](https://github.com/PivnoyFei/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
 Проект запущен по адресу http://84.201.140.26/
@@ -107,6 +108,27 @@ docker-compose exec backend python manage.py createsuperuser
 ```bash
 docker-compose down -v
 ```
+
+### Как запустить проект на сервере:
+Установите Docker и Docker-compose:
+```bash
+sudo apt install docker.io
+sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+```
+Проверьте корректность установки Docker-compose:
+```bash
+sudo  docker-compose --version
+```
+
+Отредактируйте файл ```nginx/default.conf``` и в строке ```server_name``` впишите IP виртуальной машины (сервера).
+Скопируйте файлы ```docker-compose.yaml``` и ```nginx/default.conf``` из вашего проекта на сервер:
+
+### Зайдите в репозиторий в котором расположены файлы на локальной машине и отправьте файлы на сервер.
+```bash
+sudo mkdir <создает нужную папка>
+scp docker-compose.yaml <username>@<host>:<Нужная папка>/docker-compose.yaml
+scp default.conf <username>@<host>:<Нужная папка>/nginx.conf
 
 ### Разработчики проекта
 [Смелов Илья](https://github.com/PivnoyFei)
