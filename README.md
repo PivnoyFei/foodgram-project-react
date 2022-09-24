@@ -2,7 +2,7 @@
 
 ![Foodgram workflow](https://github.com/PivnoyFei/foodgram-project-react/actions/workflows/main.yml/badge.svg)
 
-#### Проект запущен по адресу http://84.201.140.26/
+#### Проект запущен по адресу http://teletype.ddns.net/
 
 #### Данные для входа с правами администратора:
 ```
