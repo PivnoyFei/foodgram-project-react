@@ -1,10 +1,10 @@
 from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import (AmountIngredient, Cart, Favorites, Ingredient,
-                            Recipe, Tag)
 from rest_framework.serializers import (ModelSerializer, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
-from users.models import User
+
+from recipes.models import (AmountIngredient, Cart, Favorites, Ingredient,
+                            Recipe, Tag)
 from users.serializers import CustomUserSerializer
 
 
@@ -64,21 +64,19 @@ class RecipeSerializer(ModelSerializer):
             'text', 'cooking_time', 'is_favorited', 'is_in_shopping_cart'
         )
 
-    def get_is_favorited(self, obj):
-        """Проверяет добавлен ли пользователем рецепт в избранное."""
-        username = self.context.get('request').user
-        if username.is_anonymous:
-            return False
-        user = get_object_or_404(User, username=username)
-        return Favorites.objects.filter(user=user, recipe=obj).exists()
+    def __get_check(self, recipe, model):
+        """Из get_is_favorited, get_is_in_shopping_cart."""
+        user = self.context.get('request').user
+        return not user.is_anonymous and model.objects.filter(
+            user=user, recipe=recipe).exists()
 
-    def get_is_in_shopping_cart(self, obj):
+    def get_is_favorited(self, recipe):
+        """Проверяет добавлен ли пользователем рецепт в избранное."""
+        return self.__get_check(recipe, Favorites)
+
+    def get_is_in_shopping_cart(self, recipe):
         """Проверяет добавлен ли пользователем рецепт в корзину."""
-        username = self.context.get('request').user
-        if username.is_anonymous:
-            return False
-        user = get_object_or_404(User, username=username)
-        return Cart.objects.filter(user=user, recipe=obj).exists()
+        return self.__get_check(recipe, Cart)
 
     def validate(self, data):
         """Проверяет входные данные при создании и редактировании рецепта."""
@@ -105,7 +103,7 @@ class RecipeSerializer(ModelSerializer):
         data['ingredients'] = ingredients
         return data
 
-    def create_ingredients(self, ingredients, recipe):
+    def __create_ingredients(self, ingredients, recipe):
         """Записывает количество ингредиентов в рецепте."""
         for ingredient in ingredients:
             AmountIngredient.objects.create(
@@ -120,7 +118,7 @@ class RecipeSerializer(ModelSerializer):
         ingredients = validated_data.pop('ingredients')
         recipe = Recipe.objects.create(image=image, **validated_data)
         recipe.tags.set(self.initial_data.get('tags'))
-        self.create_ingredients(ingredients, recipe)
+        self.__create_ingredients(ingredients, recipe)
         return recipe
 
     def update(self, instance, validated_data):
@@ -135,6 +133,6 @@ class RecipeSerializer(ModelSerializer):
         instance.tags.clear()
         instance.ingredients.clear()
         instance.tags.set(self.initial_data.get('tags'))
-        self.create_ingredients(ingredients, instance)
+        self.__create_ingredients(ingredients, instance)
         instance.save()
         return instance

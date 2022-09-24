@@ -43,7 +43,7 @@ jobs:
           push: true
           context: .
           file: ./backend/Dockerfile
-          tags: kekkisama/backend:latest
+          tags: kekkisama/backend:v1
 
   deploy:
     runs-on: ubuntu-latest
@@ -59,8 +59,8 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm web
-            sudo docker pull kekkisama/backend:latest
+            sudo docker-compose rm backend
+            sudo docker pull kekkisama/backend:v1
             sudo docker pull kekkisama/frontend:latest
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env

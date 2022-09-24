@@ -1,16 +1,17 @@
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+
 from recipes import serializers
 from recipes.filters import IngredientSearchFilter, RecipeFilterSet
 from recipes.models import (AmountIngredient, Cart, Favorites, Ingredient,
                             Recipe, Tag)
 from recipes.pagination import CustomPagination
 from recipes.permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
-from rest_framework import status, viewsets
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.response import Response
 from users.models import User
 
 
@@ -44,8 +45,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
-    def get_add_delete_recipe(self, model, request, pk):
+    def __get_add_delete_recipe(self, model, request, pk):
         """
+        Вызывается методом: favorite, shopping_cart.
         Проверяет наличие рецепта в избранных или корзине
         после добавляет или удаляет его.
         """
@@ -55,21 +57,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             model.objects.get_or_create(user=user, recipe=recipe)
             serializer = serializers.FavoritesSerializer(recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        favorite = get_object_or_404(model, user=user, recipe=recipe)
-        favorite.delete()
+        get_object_or_404(model, user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=True, methods=('post', 'delete'),
             permission_classes=(IsAuthenticated,))
     def favorite(self, request, pk=None):
         """Добавляет или удаляет рецепт из избранного."""
-        return self.get_add_delete_recipe(Favorites, request, pk)
+        return self.__get_add_delete_recipe(Favorites, request, pk)
 
     @action(detail=True, methods=('post', 'delete'),
             permission_classes=(IsAuthenticated,))
     def shopping_cart(self, request, pk=None):
         """Добавляет или удаляет рецепт из корзины."""
-        return self.get_add_delete_recipe(Cart, request, pk)
+        return self.__get_add_delete_recipe(Cart, request, pk)
 
     @action(detail=False, methods=('get',),
             permission_classes=(IsAuthenticated,))
@@ -79,13 +80,11 @@ class RecipeViewSet(viewsets.ModelViewSet):
         Пользователь получает файл с суммированным перечнем
         и количеством необходимых ингредиентов для всех рецептов.
         """
-        user = get_object_or_404(User, username=request.user)
-        carts = user.cart.all()
+        carts = get_object_or_404(User, username=request.user).cart.all()
         ingredients_set = {}
 
         for item in carts:
-            recipe = item.recipe
-            ingredients = AmountIngredient.objects.filter(recipe=recipe)
+            ingredients = AmountIngredient.objects.filter(recipe=item.recipe)
 
             for ingredient in ingredients:
                 amount = ingredient.amount

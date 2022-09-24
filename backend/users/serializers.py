@@ -1,8 +1,9 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from drf_extra_fields.fields import Base64ImageField
-from recipes.models import Recipe
 from rest_framework.serializers import (ModelSerializer, ReadOnlyField,
                                         SerializerMethodField, ValidationError)
+
+from recipes.models import Recipe
 from users.models import Follow, User
 
 
@@ -17,7 +18,6 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
     def validate(self, data):
         """Проверяет введенные данные."""
-
         username = data.get('username')
         first_name = data.get('first_name')
         last_name = data.get('last_name')
@@ -45,10 +45,9 @@ class CustomUserSerializer(UserSerializer):
 
     def get_is_subscribed(self, author):
         """Проверяет подписан ли текущий пользователь на автора."""
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return Follow.objects.filter(user=request.user, author=author).exists()
+        user = self.context.get('request').user
+        return not user.is_anonymous and Follow.objects.filter(
+            user=user, author=author).exists()
 
 
 class FollowRecipeSerializer(ModelSerializer):
@@ -76,12 +75,9 @@ class FollowSerializer(ModelSerializer):
 
     def get_is_subscribed(self, author):
         """Проверяет подписан ли текущий пользователь на автора."""
-        request = self.context.get('request')
-        if not request or request.user.is_anonymous:
-            return False
-        return Follow.objects.filter(
-            user=request.user, author=author.author
-        ).exists()
+        user = self.context.get('request').user
+        return not user.is_anonymous and Follow.objects.filter(
+            user=user, author=author.author).exists()
 
     def get_recipes(self, author):
         """Отображает рецепты в мои подписки."""

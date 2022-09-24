@@ -1,6 +1,7 @@
 from django.urls import include, path
-from recipes import views
 from rest_framework.routers import SimpleRouter
+
+from recipes import views
 
 router = SimpleRouter()
 router.register("tags", views.TagsViewSet, "tags")

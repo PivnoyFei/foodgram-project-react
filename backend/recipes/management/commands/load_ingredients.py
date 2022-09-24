@@ -2,6 +2,7 @@ import json
 import os
 
 from django.core.management.base import BaseCommand, CommandError
+
 from foodgram.settings import DATA_ROOT
 from recipes.models import Ingredient, Tag
 

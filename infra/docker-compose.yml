@@ -10,7 +10,7 @@ services:
       - ./.env
 
   backend:
-    image: kekkisama/backend:latest
+    image: kekkisama/backend:v1
     restart: always
     volumes:
       - static_value:/backend/static/
