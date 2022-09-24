@@ -6,7 +6,7 @@
 
 #### Данные для входа с правами администратора:
 ```
-email = admin@fake.fake
+username = admin
 password = admin_fake
 ```
 
