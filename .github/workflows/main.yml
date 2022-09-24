@@ -68,7 +68,7 @@ jobs:
           stack_file_name: docker-compose.yaml
           script: |
             sudo docker-compose stop
-            sudo docker-compose rm backend
+            sudo docker-compose rm web
             sudo docker pull kekkisama/backend:v1
             sudo docker pull kekkisama/frontend:latest
             touch .env
