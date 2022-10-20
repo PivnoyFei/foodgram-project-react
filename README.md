@@ -1,14 +1,6 @@
-<h1 align="center"><a target="_blank" href="https://github.com/PivnoyFei/foodgram-project-react/">Проект Продуктовый помошник</a></h1>
+<h1 align="center"><a target="_blank" href="https://github.com/PivnoyFei/foodgram-project-react/">Проект Продуктовый помощник</a></h1>
 
 ![Foodgram workflow](https://github.com/PivnoyFei/foodgram-project-react/actions/workflows/main.yml/badge.svg)
-
-#### Проект запущен по адресу http://teletype.ddns.net/
-
-#### Данные для входа с правами администратора:
-```
-username = admin
-password = admin_fake
-```
 
 ## Описание
 Проект Foodgram, «Продуктовый помощник». На этом сервисе пользователи смогут публиковать рецепты, подписываться на публикации других пользователей, добавлять понравившиеся рецепты в список «Избранное», а перед походом в магазин скачивать сводный список продуктов, необходимых для приготовления одного или нескольких выбранных блюд.
